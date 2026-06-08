@@ -1,0 +1,51 @@
+name: NucoOS Packages
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-packages:
+    name: NucoOS - ${{ matrix.paket_adi }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false 
+      matrix:
+        paket_adi: 
+          - godot
+
+    steps:
+      - name: 1. Sablonlarimizi Indir
+        uses: actions/checkout@v4
+        with:
+          path: nuco-repo
+
+      - name: 2. Derleme Motorunu (Void-Packages) Indir
+        uses: actions/checkout@v4
+        with:
+          repository: void-linux/void-packages
+          path: void-packages
+
+      - name: 3. NucoOS Sablonlarini Motora Enjekte Et
+        run: |
+          cp -r nuco-repo/srcpkgs/* void-packages/srcpkgs/
+
+      - name: 4. Akilli Onbellek (Cache) Kontrolu
+        uses: actions/cache@v4
+        with:
+          path: void-packages/hostdir/binpkgs
+          key: nucoos-${{ matrix.paket_adi }}-${{ hashFiles(format('nuco-repo/srcpkgs/{0}/template', matrix.paket_adi)) }}
+
+      - name: 5. Derleme Ortamini Hazirla
+        working-directory: ./void-packages
+        run: ./xbps-src binary-bootstrap
+
+      - name: 6. Paketi Derle
+        working-directory: ./void-packages
+        run: ./xbps-src pkg ${{ matrix.paket_adi }}
+
+      - name: 7. Uretilen Paketi Teslim Et
+        uses: actions/upload-artifact@v4
+        with:
+          name: nucoos-${{ matrix.paket_adi }}-paketi
+          path: void-packages/hostdir/binpkgs/**/*.xbps
+          if-no-files-found: warn

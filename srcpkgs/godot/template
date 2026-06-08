@@ -1,0 +1,21 @@
+# srcpkgs/godot/template
+
+pkgname=godot
+version=4.6.3
+revision=1
+build_style=scons
+configure_args="platform=linuxbsd target=editor x11=yes wayland=yes"
+
+hostmakedepends="pkg-config scons wayland-protocols"
+makedepends="alsa-lib-devel freetype-devel libglvnd-devel libxkbcommon-devel pulseaudio-devel wayland-devel vulkan-loader-devel"
+
+short_desc="NucoOS icin ozel derlenmis, donanim uyumlu Godot Motoru"
+maintainer="Nesimi Umutcan Ozturk"
+license="MIT"
+homepage="https://godotengine.org"
+distfiles="https://github.com/godotengine/godot/releases/download/${version}-stable/godot-${version}-stable.tar.xz"
+checksum="2261028c0dfc10e0cf4800a5b2e5a57ea241f72965162327f5764d536a69a46a"
+
+do_install() {
+    vbin bin/godot.linuxbsd.editor.x86_64 godot
+}
