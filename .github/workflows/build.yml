@@ -1,4 +1,4 @@
-name: NucoOS Paket Fabrikasi
+name: NucoOS Packages
 
 on:
   workflow_dispatch:
