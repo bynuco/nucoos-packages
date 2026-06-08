@@ -35,10 +35,13 @@ jobs:
           path: void-packages/hostdir/binpkgs
           key: nucoos-${{ matrix.paket_adi }}-${{ hashFiles(format('nuco-repo/srcpkgs/{0}/template', matrix.paket_adi)) }}
 
-      - name: 5. Ubuntu Sunucusuna Void Araclarini (XBPS) iliştir
+      - name: 5. Ubuntu Sunucusuna Void Araclarini (XBPS) İliştir
         run: |
-          wget https://repo-default.voidlinux.org/static/xbps-static-latest-x86_64-musl.tar.xz
-          sudo tar xf xbps-static-latest-x86_64-musl.tar.xz -C /
+          wget https://repo-default.voidlinux.org/static/xbps-static-latest.x86_64-musl.tar.xz
+          mkdir -p xbps-tools
+          tar xf xbps-static-latest.x86_64-musl.tar.xz -C xbps-tools
+          sudo cp -a xbps-tools/usr/bin/* /usr/local/bin/
+          xbps-install --version
 
       - name: 6. Derleme Ortamini Hazirla
         working-directory: ./void-packages
