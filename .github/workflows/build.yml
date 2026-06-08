@@ -35,15 +35,20 @@ jobs:
           path: void-packages/hostdir/binpkgs
           key: nucoos-${{ matrix.paket_adi }}-${{ hashFiles(format('nuco-repo/srcpkgs/{0}/template', matrix.paket_adi)) }}
 
-      - name: 5. Derleme Ortamini Hazirla
+      - name: 5. Ubuntu Sunucusuna Void Araclarini (XBPS) iliştir
+        run: |
+          wget https://repo-default.voidlinux.org/static/xbps-static-latest-x86_64-musl.tar.xz
+          sudo tar xf xbps-static-latest-x86_64-musl.tar.xz -C /
+
+      - name: 6. Derleme Ortamini Hazirla
         working-directory: ./void-packages
         run: ./xbps-src binary-bootstrap
 
-      - name: 6. Paketi Derle
+      - name: 7. Paketi Derle
         working-directory: ./void-packages
         run: ./xbps-src pkg ${{ matrix.paket_adi }}
 
-      - name: 7. Uretilen Paketi Teslim Et
+      - name: 8. Uretilen Paketi Teslim Et
         uses: actions/upload-artifact@v4
         with:
           name: nucoos-${{ matrix.paket_adi }}-paketi
