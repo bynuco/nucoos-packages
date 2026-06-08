@@ -1,4 +1,4 @@
-name: NucoOS Packages
+name: NucoOS Paket Fabrikasi
 
 on:
   workflow_dispatch:
@@ -14,7 +14,7 @@ jobs:
           - godot
 
     steps:
-      - name: 1. Sablonlarimizi Indir
+      - name: 1. Kendi NucoOS Sablonlarimizi Indir
         uses: actions/checkout@v4
         with:
           path: nuco-repo
@@ -43,15 +43,19 @@ jobs:
           sudo cp -a xbps-tools/usr/bin/* /usr/local/bin/
           xbps-install --version
 
-      - name: 6. Derleme Ortamini Hazirla
+      - name: 6. Ubuntu Guvenlik Duvarini Esnet (User Namespaces Iznini Ver)
+        run: |
+          sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
+
+      - name: 7. NucoOS Derleme Ortamini Hazirla
         working-directory: ./void-packages
         run: ./xbps-src binary-bootstrap
 
-      - name: 7. Paketi Derle
+      - name: 8. Paketi Derle
         working-directory: ./void-packages
         run: ./xbps-src pkg ${{ matrix.paket_adi }}
 
-      - name: 8. Uretilen Paketi Teslim Et
+      - name: 9. Uretilen Paketi Teslim Et
         uses: actions/upload-artifact@v4
         with:
           name: nucoos-${{ matrix.paket_adi }}-paketi
